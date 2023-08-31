@@ -1,0 +1,150 @@
+PYTHON PANDAS DATA FRAMES:
+
+1. DATA DISCOVERY: 
+
+IMPORT DATA:
+	Dataframe = r'C:\Users\Windows 10 Pro\Desktop\New folder (2)'  -----to import data into pandas
+	Dataframe = pd.read_csv(Dataframe)
+	Dataframe
+
+TO SEE THE HEAD OR DESCRIBE OR GET INFORMED OR COLUMNS:
+	Dataframe.head(10)---to show the first 10 rows of data. Dataframe is the name of the table
+	Dataframe.describe() ---to describe the data
+	Dataframe.info() ----to display a concise summary of the data 
+	Dataframe.columns() ----to display the attributes of the data 
+	Dataframe.shape -----to show number of rows and columns
+
+2. DATA PREPARATION:
+
+Choosing columns we need or most useful
+	Df = Dataframe [['column_name1', 'column_name2', 'column_name3', 'column_name4', 'column_name5']].copy()
+	Df.dtypes ----to check the data types
+
+Renaming columns
+	Teams = Home_Away.rename(columns={"number_of_goals_team1":"home_goals", "number_of_goals_team2":"away_goals"})
+
+
+REORDERING DATA I.E MONTH LIST:
+	monthly_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+         'August', 'September', 'October', 'November', 'December']
+	monthly_rides = monthly_rides.reindex(index=monthly_order)
+
+
+
+Doing away with spaces between column names and replacing with underscore eg.[long driving distance]
+ 	Df.columns = df.columns.str.replace(' ', '_')
+
+Doing away with charecters
+	df_companies.Valuation = df_companies.Valuation.str.strip('$B')
+
+Sorting data based on column values
+	df_sorted = df.sort_values('Age', ascending=False)
+
+Converting string to integer
+	Df['column_x'] = Df['column_x'].astype('int')
+
+To change the date frame eg. 20th Jan 2022...converting to date column------import datetime as dt
+	Df.date = pd.to_datetime(df.date)
+
+To change data type of date from object to date and creating new column for years
+	df_companies['Year_Joined'] = pd.to_datetime(df_companies['Date_Joined']).dt.year
+
+To extract the month data
+	df['month']= df['date'].dt.month
+
+To create a new month txt column
+	df['month_txt'] = df['date'].dt.month_name().str.slice(stop=3)
+
+Date codes to break dates into days, weeks , months, quarters and years
+	# Create four new columns.
+	df['week'] = df['date'].dt.strftime('%Y-W%V')
+	df['month'] = df['date'].dt.strftime('%Y-%m')
+	df['quarter'] = df['date'].dt.to_period('Q').dt.strftime('%Y-Q%q')
+	df['year'] = df['date'].dt.strftime('%Y')
+
+CREATING NEW COLUMNS FOR WEEKS AND DAYS, YEAR and MONTHS
+	df['week'] = df.date.dt.isocalendar().week----TO assign a column for week..df.date= dataframe.datecolumn(manipulated)
+	df['weekday'] = df.date.dt.day_name()----To assign a column for weekday
+	union_df['year'] = union_df.date.dt.year
+	union_df['month'] = union_df.date.dt.month
+	union_df['month_txt'] = union_df.date.dt.month_name()
+
+
+GETTING NUMBR OF UNIQUE VALUES:
+	df['DOLocationID'].nunique()
+To check if there are any null values.
+	null_values = Df.isnull().sum()
+
+Filtering to review rows with missing values
+	df_rows_missing=df_companies[df_companies.isna().any(axis=1)]
+
+To remove null values
+# Remove rows with null values
+	df_without_null = df.dropna() -or- df.dropna(inplace=True) 
+
+#Removing Null values in a single column
+	df = df.dropna(subset = ['columnx'], axis = 0)
+
+# To remove duplicates
+	df.drop_duplicates()
+	df.drop_duplicates().shape -----to see the shape of the data after removing duplicates
+
+
+To change column with % values to interger
+	df.column_name = df.column_name.apply(lambda x:x.replace("%",''))
+
+3. DATA ANALYSIS:
+
+Data calculation such as mean,mode, count, median, std dv, max , min
+	Dataframe['column_name'].mean()-----for mean
+	Dataframe['column_name'].median()----for median
+	Dataframe['column_name'].mode()------for mode
+	Dataframe['column_name'].max()----to show the maximum value
+	Dataframe['column_name'].min()----to show the minimum value
+	Dataframe['column_name'].std()----to show the std dev
+	Dataframe['column_name'].count()-----count no of rows in a column
+	Dataframe['column_name'].value_counts()['row_name']....to count number of entries in a specific row
+
+FILTERING DATA:(applying the Boolean Masking)
+	A = Dataframe[(Dataframe['column_name']=='row_value')] ---to filter rows based on certain condition.
+	A
+	A1 = Dataframe[(Dataframe['column_name'] > 5) & (Dataframe['column_name']==1)]---combination of filters on 2 or more conditions
+	A1 = Dataframe[(Dataframe['column_x'] > 5) | (Dataframe['column_x'] < 1)] ---to show values that are greater than 5 and values less then 1 using the or "|" operator
+
+ADDING A COLUMN :
+	Dataframe['new_column'] = Dataframe['column_x'] *10 ---creating a new column by multiplying values in x by 10
+	Dataframe	
+
+Selecting a certain value or SLICING data:
+	Dataframe.iloc[5] ----selecting row no 6 information ....remember index starts at 0
+	Dataframe.iloc[0:10] ----selecting from row 0 to row 9
+	Dataframe[['name','region']]----selecting specific columns
+	Dataframe.iloc[0:10, [3,4]] ------selecting from row 0 to 9 at columns 3&4 only.
+
+GROUP BY:
+	Q1 =Dataframe.groupby(['Column_x']).sum() ----brings sum of all values in that column group
+	Q1 =A1.groupby(['Comment']).sum()[['Sales']]------e.g.you add the sales to get some of sales only instead of all values
+	
+	Q1 =A1.groupby(['Comment']).agg(['mean', 'median'])[['Sales']]----aggregrate helps to group by more than one function
+
+MERGING:
+	CONCAT FUNCTION IS USED TO MERGE DATA VERTICALLY BY USING AXIS = 0
+	Dataframe= pd.concat([table1, table2], axis = 0) --make sure both tables have the same column names
+	Dataframe.reset_index(drop = True) ----helps to reset index numbers
+	
+	MERGE FUNTION IS USED TO MERGE DATA HORIZENTALL WITH KEY VALUES [ON='COMMON_COLUMN'] [HOW='TYPE OF JOIN']
+	Inner = pd.merge(table1, table2, on = 'column_x', how = 'inner')
+
+DISPLAYING % OF EACH UNIQUE VALUE COUNTS IN A COLUMN:
+	df.column.value_counts(normalize = True)*100
+
+
+# Dummy encode categorical variables
+churn_df = pd.get_dummies(churn_df, drop_first=True)
+
+
+
+STATISTICS CODE : 
+
+CONVERTING CATEGORICAL COLUMN FROM STR TO NUMERIC:
+	df_subset['satisfaction'] = OneHotEncoder(drop='first').fit_transform(df_subset[['satisfaction']]).toarray()

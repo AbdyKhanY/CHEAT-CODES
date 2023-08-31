@@ -1,0 +1,115 @@
+CREATE PAIRWISE SCATTERPLOT OF DATAFRAME:
+	sns.pairplot(penguins_final)
+
+BOX PLOT:
+	plt.figure(figsize=(7,2))
+1	plt.title('trip_distance')
+	sns.boxplot(data=None, x=df['trip_distance'], fliersize=1);
+
+
+2	plt.boxplot(df['total_amount'])
+	flier_size = 1
+	plt.title('Box Plot of Total Amount')---ADDING TITLES
+	plt.xlabel("Total amount")
+	plt.ylabel('Amount')
+	plt.show()
+
+3	# Create boxplot to show distribution of price by color grade
+	sns.boxplot(x = "color", y = "log_price", data = diamonds)
+
+HISTOGRAM:fig = sns.histplot(data['Sales'])
+
+1	plt.hist(df['trip_distance'], bins =range(0,26,1), edgecolor= 'orange')
+	plt.xlim(left=0)---ADJUSTING X LIMIT
+	plt.xlabel('Trip Distance')
+	plt.ylabel('Frequency')
+	plt.title('Histogram of Trip Distance')
+	plt.show()
+
+2	plt.figure(figsize=(12,6))
+	ax = sns.histplot(df['total_amount'],bins=range(-10,101,5))
+	plt.xlabel('Total amount')
+	plt.ylabel('Frequency')
+	plt.title('Histogram of Total Amount')
+	plt.show()
+
+3.HISTOGRAM FOR TWO VARIABLES:	
+	# Create histogram of tip_amount by vendor
+	plt.figure(figsize=(12,7))
+	ax = sns.histplot(data=df, x='tip_amount', bins=range(0,21,1), 
+                  hue='VendorID', 
+                  multiple='stack',
+                  palette='pastel')
+	ax.set_xticks(range(0,21,1))
+	ax.set_xticklabels(range(0,21,1))
+	plt.title('Tip amount by vendor histogram')
+
+
+4. NORMALILITY OF ASSUMPTIONS:
+HISTOGRAM OF RESIDUALS:
+	residuals = model.resid
+	fig, axes = plt.subplots(1, 2, figsize = (8,4))---1 BY 2 PLOT FIGURE
+	sns.histplot(residuals, ax=axes[0]) 
+	axes[0].set_xlabel("Residual Value") ---X label of residual plot
+	axes[0].set_title("Histogram of Residuals") ---Title of the risidual plot
+	
+
+QQPLOT OF RESIDUALS:
+	sm.qqplot(residuals, line='s',ax = axes[1])
+	axes[1].set_title("Normal Q-Q plot")
+	plt.tight_layout()
+	plt.show()
+
+5.HOMOSCEDACITY ASSUMPTION:
+	# Create a scatterplot with the fitted values from the model and the residuals.
+	fig = sns.scatterplot(x = model.fittedvalues, y = model.resid)
+	fig.set_xlabel("Fitted Values")
+	fig.set_ylabel("Residuals")
+	fig.set_title("Fitted Values v. Residuals")
+	# Add a line at y = 0 to visualize the variance of residuals above and below 0.
+	fig.axhline(0)
+	plt.show()
+
+
+BARCHART
+	daily_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+	plt.figure(figsize=(12,7))
+	ax = sns.barplot(x=daily_rides.index, y=daily_rides)
+	ax.set_xticklabels(daily_order)
+	ax.set_ylabel('Count')
+	plt.title('Ride count by day', fontsize=16);
+
+
+BARCHART
+	Data visualization seaborn
+	# Define order of days for the plot
+	weekday_order = ['Monday','Tuesday', 'Wednesday', 'Thursday','Friday','Saturday','Sunday']
+
+	# Create boxplots of strike counts for each day of week
+	g = sns.boxplot(data=df, 
+            x='weekday',
+            y='number_of_strikes', 
+        hue = 'weekday', -----to add colours         
+	order=weekday_order, --------------this helps to arrange data in orderly way
+            showfliers=False 
+            );
+	g.set_title('Lightning distribution per weekday (2018)');
+
+BARCHART
+Data visualization (x and height ) argument
+	plt.figure(figsize=(16, 6))
+	colors = ['blue', 'green', 'red', 'orange', 'purple', 'yellow', 'pink', 'brown', 'gray', 'cyan']
+	plt.bar(x=top10['team'],height= top10['total_goals'], color=colors)
+	plt.plot()
+
+	plt.xlabel("Teams")
+	plt.ylabel("Total Goals Scored")
+	plt.title("Top 10 teams with the most goals in worldcup 2022")
+	plt.legend()
+	plt.show() 	
+
+SCATTER PLOT MATRIX(Series of scatterplot that shows the relationship btwn pairs of variables)
+	sns.pairplot(Df)
+
+SCATTER PLOT COMPARING 2 VALUES:
+	sns.scatterplot(x= data.X, y = data.Y)

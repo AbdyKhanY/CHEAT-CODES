@@ -1,0 +1,130 @@
+PYTHON PANDAS DATA FRAMES CHEAT SHEET
+
+1. DATA DISCOVERY:
+
+IMPORT DATA:
+- Use this to import data into pandas.
+- Example:
+  Dataframe = pd.read_csv("path_to_your_file.csv")
+
+SEE THE HEAD OR DESCRIBE OR GET INFORMED OR COLUMNS:
+- Peek at the data or get basic info.
+- Example:
+  Dataframe.head(10)  # First 10 rows
+  Dataframe.describe()  # Summary statistics
+  Dataframe.info()  # Data overview
+  Dataframe.columns  # Attribute names
+  Dataframe.shape  # Number of rows and columns
+
+2. DATA PREPARATION:
+
+Choosing Columns:
+- Select specific columns you need.
+- Example:
+  Df = Dataframe[['column_name1', 'column_name2']]
+
+Renaming Columns:
+- Give columns more meaningful names.
+- Example:
+  Teams = Home_Away.rename(columns={"old_name": "new_name"})
+
+Removing Spaces:
+- Replace spaces in column names with underscores.
+- Example:
+  Df.columns = df.columns.str.replace(' ', '_')
+
+Doing away with characters:
+- Remove specific characters from column values.
+- Example:
+  df_companies.Valuation = df_companies.Valuation.str.strip('$B')
+
+Sorting Data:
+- Sort data based on column values.
+- Example:
+  df_sorted = df.sort_values('Age', ascending=False)
+
+Converting String to Integer:
+- Change text numbers to actual numbers.
+- Example:
+  Df['column_x'] = Df['column_x'].astype('int')
+
+Working with Dates:
+- Convert date columns and extract date parts.
+- Example:
+  Df.date = pd.to_datetime(df.date)
+  df['year'] = df.date.dt.year
+
+3. DATA ANALYSIS:
+
+Calculations:
+- Compute various statistics on columns.
+- Example:
+  Dataframe['column_name'].mean()  # Mean average
+  Dataframe['column_name'].max()  # Highest value
+
+Filtering Data:
+- Select rows based on conditions.
+- Example:
+  A = Dataframe[Dataframe['column_name'] == 'specific_value']
+
+Adding Columns:
+- Create new columns with calculated values.
+- Example:
+  Dataframe['new_column'] = Dataframe['column_x'] * 10
+
+Grouping Data:
+- Combine data and summarize based on certain columns.
+- Example:
+  Q1 = Dataframe.groupby(['Column_x']).sum()
+
+MERGING:
+
+Merging Tables:
+- Combine tables horizontally or vertically.
+- Example:
+  Dataframe = pd.concat([table1, table2], axis=0)
+
+DISPLAYING:
+
+Displaying Data:
+- Show percentage of each unique value in a column.
+- Example:
+  df.column.value_counts(normalize=True) * 100
+
+Dummy Encoding:
+- Convert categorical variables into numerical columns.
+- Example:
+  churn_df = pd.get_dummies(churn_df, drop_first=True)
+
+HANDLING NULL VALUES AND UNIQUE VALUES:
+
+Getting Number of Unique Values:
+- Count distinct values in a column.
+- Example:
+  unique_values_count = df['DOLocationID'].nunique()
+
+Checking for Null Values:
+- Identify missing values in the dataset.
+- Example:
+  null_values = Df.isnull().sum()
+
+Filtering Rows with Missing Values:
+- Create a subset of rows containing missing values.
+- Example:
+  rows_with_missing = df[df.isna().any(axis=1)]
+
+Removing Null Values:
+- Remove rows or columns with missing values.
+- Example:
+  df_without_null = df.dropna()  # Remove rows with null values
+  df.dropna(subset=['column_x'], axis=0, inplace=True)  # Remove null values in a specific column
+
+Removing Duplicate Values:
+- Remove duplicate rows from the dataset.
+- Example:
+  df.drop_duplicates()  # Remove duplicate rows
+
+Converting Column with % Values to Integer:
+- Remove percentage symbols from a column and convert to integers.
+- Example:
+  df.column_name = df.column_name.apply(lambda x: x.replace("%", ""))

@@ -1,0 +1,120 @@
+import statsmodels.api as sm
+from scipy import stats
+
+STATISTICS CODE : 
+
+CONVERTING CATEGORICAL COLUMN FROM STR TO NUMERIC:
+	df_subset['satisfaction'] = OneHotEncoder(drop='first').fit_transform(df_subset[['satisfaction']]).toarray()
+
+PROBABILITY DISTRIBUTION IN PYTHON:
+
+0.A. CREATING HISTOGRAM TO CHECK VISUALIZION OF NORMAL  DISTRIBUTION:
+	dF["COLUMNX"].hist();
+
+O.B.CREATE A QQ PLOT TO CHECK IF THE DATA IS NORMALLY DISTRIBUTED:
+	fig = sm.qqplot(df["COLUMNX"], line='s')
+	plt.show() 
+
+
+1. NORMAL DISTRIBUTION:
+	lower_limit = mean_COLUMNX - 1 * std_COLUMNX----TO check emprical rule 1; if 68% of the value falls within 1 std dev of mean 
+	upper_limit = mean_COLUMNX + 1 * std_COLUMNX-----n/b change 1 to 2 or 3 to test the 2nd and 3rd emprical rule
+	((df['COLUMNX'] >= lower_limit) & (df['COLUMNX'] <= upper_limit)).mean()
+
+
+2. COMPUTING Z-SCORES TO FIND OUTLIERS:
+	DF['Z_SCORE'] = stats.zscore(DF['COLUMNX'])---IF THE Z-score is more than 3 or less than -3 its an outlier.
+	DF
+
+	DF[(DF['Z_SCORE'] > 3) | (DF['Z_SCORE'] < -3)]---TO Find the outliers.
+
+3.SAMPLING CODES and Getting Sample Mean:
+	sampled_data = education_districtwise.sample(n=50, replace=True, random_state=31208).mean()
+	sampled_data --REPLACE(true) is to select sampling with replacement, random_state is the starting point for generating seed of random numbers.
+
+4. APPLYING CENTRAL LIMIT THEOREm using for loop of 10,000:
+	estimate_list = []
+	for i in range(10000):
+    	estimate_list.append(df['columnX'].sample(n=50,replace=True).mean())
+
+	estimate_df = pd.DataFrame(data={'estimate': estimate_list})-----To build dataframe for the estimate
+
+5. TO Create STANDARD Error:
+	standard_error = estimate_df['estimate'].std()
+	standard_error
+
+6. GRID of 100 values from Xmin to Xmax
+
+plt.hist(estimate_df['estimate'], bins=25, density=True, alpha=0.4, label = "histogram of sample means of 10000 random samples")
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100) # generate a grid of 100 values from xmin to xmax.
+p = stats.norm.pdf(x, population_mean, standard_error)
+plt.plot(x, p, 'k', linewidth=2, label = 'normal curve from central limit theorem')
+plt.axvline(x=population_mean, color='g', linestyle = 'solid', label = 'population mean')
+plt.axvline(x=sample_mean, color='r', linestyle = '--', label = 'sample mean of the first random sample')
+plt.axvline(x=mean_sample_means, color='b', linestyle = ':', label = 'mean of sample means of 10000 random samples')
+plt.title("Sampling distribution of sample mean")
+plt.xlabel('sample mean')
+plt.ylabel('density')
+plt.legend(bbox_to_anchor=(1.04,1))
+
+
+7. SAMPLE STD ERROR:FORMULA (SE =S/SQRT(N)) 
+	estimated_standard_error = sampled_data['OVERALL_LI'].std() / np.sqrt(sampled_data.shape[0])
+
+8. 95% CONFIDENCE INTERVAL:
+	stats.norm.interval(alpha=0.95, loc=sample_mean, scale=estimated_standard_error)
+
+9. Ttest for alternative and Null hyothesis for 2 samples:
+	stats.ttest_ind(a=sampled_state21['OVERALL_LI'], b=sampled_state28['OVERALL_LI'], equal_var=False) --equal_var is set to false bcz you dont want to assume that the two samples have the same variance.
+
+10. Ttest for null and alternative for 1 sample:
+	stats.ttest_1samp(Michi['aqi'], 10, alternative='greater')
+
+
+11. CONSTRUCTING A MODEL FOR LINEAR REGRESSION:
+
+STEP 1 	ols_data = DF[["Y_VARIABLE", "X_VARIABLE"]] ----SUBSET THE DATA(Extract the x and y variable you are targetting.
+STEP 2 ols_formula = "Y_VARIABLE ~ X_VARIABLE" -----WRITE OUT THE OLS FORMULA.
+STEP 3 from statsmodels.formula.api import ols ----IMPORT OLS FUNCTION
+STEP 4 	# Build OLS, fit model to data
+	OLS = ols(formula = ols_formula, data = ols_data)
+	model = OLS.fit()
+	model.summary()
+
+
+12. IMPORT TRAIN-TEST SPLIT FUNCTION: FOR MULTIPPLE LINEAR REGRESSION--first you need to subset dependant(y) and independent(x) variables
+	penguins_X = penguins[["bill_length_mm", "gender", "species"]]
+	penguins_y = penguins[["body_mass_g"]]
+
+	from sklearn.model_selection import train_test_split 
+	
+	# Create training data sets and holdout (testing) data sets
+
+	X_train, X_test, y_train, y_test = train_test_split(penguins_X, penguins_y, 
+                                                    test_size = 0.3, random_state = 42)
+
+MODEL CONSTRUCTION FOR MULTIPLE LIENAR REGRESSION:
+	# Write out OLS formula as a string
+	ols_formula = "body_mass_g ~ bill_length_mm + C(gender) + C(species)"
+
+	# Import ols() function from statsmodels package
+	from statsmodels.formula.api import ols
+
+	# Create OLS dataframe
+	ols_data = pd.concat([X_train, y_train], axis = 1)
+
+	# Create OLS object and fit the model
+	OLS = ols(formula = ols_formula, data = ols_data)
+	model = OLS.fit()
+
+	# Get model results
+	model.summary()
+
+PERFORMING ONE WAY ANOVA TEST:(import statsmodels.api as sm)
+	sm.stats.anova_lm(Model, typ = 2)
+
+PERFORM an ANOVA post hoc test:# Import Tukey's HSD function
+	from statsmodels.stats.multicomp import pairwise_tukeyhsd
+	tukey_oneway = pairwise_tukeyhsd(endog = data["Sales"], groups = data["TV"], alpha = 0.05)
+	tukey_oneway.summary()

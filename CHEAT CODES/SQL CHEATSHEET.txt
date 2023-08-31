@@ -1,0 +1,270 @@
+
+Selecting certain columns from a SQL table:
+	SELECT column_x, column_y, column_z
+	FROM table_name;
+
+Selecting unique values from a column: USED TO DROP DUPLICATES
+	SELECT DISTINCT (column_name)
+	FROM table_name;
+
+Counting the unique values in a column:
+	SELECT  COUNT (DISTINCT column_x)
+	FROM table;
+
+Selecting Values with conditions:
+	SELECT title,release_year,rental_rate,rating---choosing the columns to display
+	FROM film
+	WHERE columnx = 'PG' AND column_y >= 2.99;------to represent only the PG values in x and values greater than or equal to 2.99 in y 
+
+	SELECT columnx,y,z
+	FROM film
+	WHERE rating = 'PG' or rating = 'R'---the or function is used to select all values in a column that fall under those conditions.
+
+	SELECT x,y,z
+	FROM film
+	WHERE  rating != 'R'---Not function is used to select all values in a column discluding value selected
+
+Order by function Sorting values in desired order:
+	SELECT *
+	FROM table
+	Where rating = 'R'
+	ORDER BY column_x, column_y DESC;-----remember where comes before the orderby.
+
+BETWEEN function is used for selecting values inbetween:
+	SELECT *
+	FROM table
+	WHERE payment_date BETWEEN '2007-02-01' AND '2007-02-14'--Will display rows between such dates
+
+LIMIT function used to limit rows displayed:
+	SELECT *
+	FROM table
+	WHERE payment_date NOT BETWEEN '2007-02-01' AND '2007-02-14'---TO SHOW payments not between given dates
+	LIMIT 10---will display the first 10 rows with in that period
+
+IN operator used to check if a value is included:
+	SELECT color FROM table
+	WHERE color IN('red','blue','green')- USE the NOT IN fuction to disclude
+
+LIKE OR ILIKE FNCTIONS:
+	SELECT * FROM customer
+	WHERE first_name LIKE 'J%'-----THIS displays eveyname that starts J
+	AND last_name ILIKE '%S' -----ILIKE IS not CASE sensetive It produces all last_names that end with S be it lower case 's' OR uppercase 'S'.
+
+	SELECT * FROM customer
+	WHERE first_name LIKE '%her%'---Displays all first_names that got "her" in their names be it in the start, middle or at the end
+
+	SELECT * FROM customer
+	WHERE first_name LIKE '_her%' ---Only one charecter is allowed to be infront of "her".
+
+AGGREGATE FUNCTIONS:
+MAX/MIN		SELECT MAX(columnX) FROM table
+AVG		SELECT ROUND(AVG(replacement_cost),2) FROM table;
+
+
+GROUP BY:
+	SELECT staff_id,customer_id, SUM(amount)
+	FROM payment
+	GROUP BY staff_id,customer_id
+	ORDER BY SUM(amount) DESC----OR you can order by cutomer_id.
+
+GROUP BY DATE FUNCTIONS;
+	SELECT DATE(payment_date),customer_id, SUM(amount)
+	FROM payment
+	WHERE customer_id >400
+	GROUP BY customer_id, DATE(payment_date)
+	ORDER BY SUM(amount) DESC
+	LIMIT 5
+
+HAVING CLAUSE:
+	SELECT customer_id, SUM(amount)
+	FROM PAYMENT
+	WHERE customer_id NOT IN (184, 87, 477) --Customer_IDS that are discluded
+	GROUP BY customer_id
+	HAVING SUM(amount)>100 ----This clause allows us to use agg result as a filter along with Group by.
+
+ALIASING A COLUMN NAME USING AS FUNCTION:
+	SELECT DATE(payment_date),customer_id, SUM(amount) AS total_spent
+	FROM payment
+	WHERE customer_id >400
+	GROUP BY customer_id, DATE(payment_date)
+	ORDER BY SUM(amount) DESC
+	LIMIT 5
+
+JOIN FUNCTION:
+	SELECT first_name, last_name, SUM(amount)
+	FROM CUSTOMER
+	JOIN PAYMENT
+	ON CUSTOMER.customer_id = PAYMENT.customer_id
+	GROUP BY first_name, last_name
+	HAVING first_name ILIKE 'J%'
+	ORDER BY SUM(amount) DESC 
+
+FULL OUTER JOIN TO IDENTIFY CUSTOMER WITH NO PAYMENT:
+	SELECT *
+	FROM payment
+	FULL JOIN customer
+	ON customer.customer_id = payment.customer_id
+	WHERE customer.customer_id IS null -----IS NULL is added to filter customer_ids with no payment
+	OR payment.payment_id IS null----- OR payment ids with no customer 
+
+SELF JOIN ON TABLES TO SHOW EMPLOYEES NAME AND THEIR RECIPIENT NAME:
+	SELECT emp.name, rep.name AS rep
+	FROM employees AS emp
+	JOIN employees AS rep
+	ON emp.emp_id = rep.report_id
+
+EXTRACTING MONTH FROM DATE COLUMN:
+	SELECT EXTRACT(MONTH FROM payment_date) AS month_name, SUM(amount) AS total_amount
+	FROM payment
+	GROUP BY EXTRACT(MONTH FROM payment_date)
+	ORDER BY EXTRACT(MONTH FROM payment_date)
+
+CALCULATING CURRENT AGE FROM A GIVEN TIME STAMP:
+	AGE(date_col)   --Returns 13YRS 1 Month and 5 Days.
+
+TO CHAR FUNCTION USED TO CONVERT DATA TYPES TO TXT
+	TO_CHAR(date_col, 'mm-dd-yyyy')
+
+EXTRACTING COUNT OF PAYMENT MADE ON A SINGLE DAY FOR EXAMPLE 'MONDAY'
+	SELECT COUNT(*) FROM payment
+	WHERE EXTRACT(dow FROM payment_date) = 1 ----Remember SUNDAY starts WITH 0 AND ENDS Saturday WITH 6
+
+MEASURING THE LENGTH OF TEXTS:
+	SELECT LENGTH (first_name) FROM CUSTOMER
+
+CONCATING TWO TXTS:
+	SELECT UPPER(first_name) || ' ' || last_name FROM CUSTOMER  -- You Can Add The Upper Function To Capitilize.
+
+EXTRACTING CERTAIN LETTERS FROM TEXT:
+	SELECT LOWER (LEFT(first_name, 1))||LOWER(last_name) || '@gmail.com' AS Custom_Email
+	FROM CUSTOMER
+
+SUB QUERY FUNCTION :
+	SELECT title, rental_rate FROM FILM
+	WHERE rental_rate >(SELECT AVG(rental_rate) FROM FILM)
+
+SUB QUERY USING IN TO INCLUDE CERTAIN VALUES:
+	SELECT film_id, title
+	FROM film 
+	WHERE film_id IN
+	(SELECT inventory.film_id FROM rental
+	JOIN inventory 
+	ON inventory.inventory_id = rental.inventory_id
+	WHERE return_date BETWEEN '2005-05-29' AND '2005-05-30')
+	ORDER BY film_id
+
+SUBQUERY USING EXISTS FUNCTION:
+	SELECT first_name, last_name
+	FROM customer AS C
+	WHERE EXISTS
+	(SELECT * FROM payment AS P
+	WHERE p.customer_id = c.customer_id
+	AND amount > 11)
+
+DELETE ROWS FROM TABLES:
+	DELETE FROM employees
+	WHERE name IN ('Jane Smith', 'Michael Johnson', 'Emily Davis');
+
+SELF JOIN TO RETRIEVE FILMS WITH THE SAME LENGTH BUT DIFFRENT IDS:
+	SELECT F1.title, F2.title AS MATCH_TITLE, F1.length
+	FROM FILM AS F1
+	JOIN FILM AS F2
+	ON F1.length = F2.length
+	AND F1.film_id != F2.film_id
+
+CAREFUL WHILE DEALING WITH FRACTIONS:
+	SELECT facid, name, membercost, monthlymaintenance
+	FROM CD.facilities
+	WHERE membercost > 0 
+	AND membercost <(1/50.0 * monthlymaintenance)  -----1/50.0 NOT JUST 1/50
+
+CREATE TABLE : 
+	CREATE TABLE account(
+		USER_ID SERIAL PRIMARY KEY,
+		USER_NAME VARCHAR (50) UNIQUE NOT NULL,
+		PASSWORD VARCHAR (50) NOT NULL,
+		EMAIL VARCHAR (200) UNIQUE NOT NULL,
+		CREATED_ON TIMESTAMP NOT NULL,
+		LAST_LOGIN TIMESTAMP
+	)
+
+REFERENCING TABLE USING FOREIGN KEYS :
+	CREATE TABLE account_job(
+		user_id INT REFERENCES account (user_id),
+		job_id INT REFERENCES job (job_id),
+		hire_date TIMESTAMP
+	)
+
+INSERTING VALUES INTO A TABLE:
+	INSERT INTO account(user_name, password, email, created_on)
+	VALUES 
+	('Khan', 'kaaraan4', 'wanagdon2@gmail.com', CURRENT_TIMESTAMP),
+	('Bobby', '@kaaraan4', 'Bobkhan@gmail.com', CURRENT_DATE)
+
+UPDATE TABLE:
+	UPDATE account
+	SET last_login = CURRENT_TIMESTAMP
+
+UPDATE JOIN TABLES AND USING RETURNS :
+	UPDATE account_job
+	SET hire_date = account.last_login
+	FROM account
+	WHERE account_job.user_id = account.user_id
+	RETURNING account_job.user_id,email, hire_date, last_login -----TO return The mentioned Columns.
+
+DELETING A ROW FROM A TABLE:
+	DELETE FROM job
+	WHERE job_name = 'COWBOY'
+	RETURNING job_id, job_name ---To return the rows deleted.
+
+ALTER TABLE NAME:
+	ALTER TABLE info
+	RENAME TO information
+
+ALTERING COLUMN NAME:
+	ALTER TABLE information
+	RENAME COLUMN person TO people
+
+TO REMOVE CONSTRAINS FROM A COLUMN IN A TABLE:
+	ALTER TABLE information
+	ALTER COLUMN people DROP NOT NULL 
+
+DROP COLUMN FROM A TABLE:
+	ALTER TABLE information
+	DROP COLUMN people
+
+CASE FUNCTION: TO GROUP ACCORDING TO CLASSES
+	SELECT customer_id,
+	CASE 
+		WHEN (customer_id <= 100) THEN 'Premium'
+		WHEN (customer_id BETWEEN 100 AND 200) THEN 'Plus'
+		ELSE 'Normal' 
+	
+	END AS CUSTOMER_LEVEL
+	FROM CUSTOMER
+
+CASE FUNCTION EQUALITY:
+	SELECT customer_id,
+	CASE customer_id
+		WHEN 2 THEN 'WINNER'
+		WHEN 5 THEN '2ND PLACE'
+		ELSE 'NORMAL'
+	END AS COMPETITION_PLACE
+	FROM CUSTOMER
+
+VIEW FUNCTION TO SAVE QUERIES:
+	CREATE VIEW customer_info AS 
+	SELECT first_name, last_name, address FROM customer
+	INNER JOIN address
+	ON customer.address_id = address.address_id
+
+ADDING A COLUMN IN A VIEW FUNCTION:
+	CREATE OR REPLACE VIEW customer_info AS 
+	SELECT first_name, last_name, address, district FROM customer
+	INNER JOIN address
+	ON customer.address_id = address.address_id 
+
+RENAMING A VIEW:
+	ALTER VIEW customer_info RENAME TO c_info
+TO DROP A VIEW 
+	DROP VIEW c_info

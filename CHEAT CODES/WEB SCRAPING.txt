@@ -1,0 +1,53 @@
+WEB SCRAPING CODES : 
+
+LIBRARIES :
+		from bs4 import BeautifulSoup
+		import requests
+		import pandas as pd
+
+CONNECTING TO THE WEBSITE:
+	
+		URL = 'https://statisticstimes.com/economy/african-countries-by-gdp.php'
+
+		page = requests.get(URL)
+
+		soup1 = BeautifulSoup(page.text, "html")
+
+		soup2 = BeautifulSoup(soup1.prettify(), 'html')
+
+		print(soup2) 
+
+Finding all tables in the webpage and then choosing table [1]:
+
+		soup2.find_all('table')[1]
+
+Finding tables with the table class_name:
+
+		soup2.find('table', class_='wikitable sortable')
+
+Finding the 'th' txt and naming it world_th:
+
+		world_th = table.find_all('th')
+		world_th
+
+REMOVING UNNECESSARY STAFFS E.G \N:
+
+		world_table_th = [' '.join(title.text.strip().split()) for title in world_th]
+		print(world_table_th)
+
+
+CREATING A DATAFRAME:
+		df = pd.DataFrame(columns = world_table_th)
+		df
+
+FINDING ALL ROW DATA:
+		column_data = table.find_all('tr')
+
+ARRANGING THE ROW DATA IN THE TABLE:
+		for row in column_data[1:]:
+   		row_data = row.find_all('td')
+    		individual_row_data = [' '.join(data.text.strip().split()) for data in row_data]
+    
+    		length = len(df)
+   		df.loc[length] = individual_row_data
+	
